@@ -1,6 +1,8 @@
 import requests
 import json
 import sys
+from boss import Boss
+from loot import Loot
 from datetime import datetime
 from bs4 import BeautifulSoup
 
@@ -83,7 +85,7 @@ def set_cache(filename):
 
 def search_zones(search_term):
     '''
-    Search the zone based on input on wowhead
+    Search the zone based on input
     Search flow: Get zones info from zones list, get bosses info from zones info,
                  get item list from wowhead using bosses info, get item info from Blizzard API
     @params:
@@ -102,6 +104,27 @@ def search_zones(search_term):
     # timeElapsed = datetime.now() - startTime
     # print('Time elpased (hh:mm:ss.ms) {}'.format(timeElapsed))
 
+
+def search_loot(boss_id):
+    '''
+    Search loot based on boss_id on wowhead
+    Search flow: Get loot list using boss_id on wowhead, parse loot list to a list of item_ids,
+                 search item info from Blizzard API
+    @params:
+        boss_id: int id of a certain boss
+    @return:
+        list of Loot objects
+    '''
+    pass
+
+
+def setup_database():
+    '''
+    Set up 2 tables in SQL database: Boss and Loot
+    Boss: Name, ID, Level, Level_Heroic, Zone, Description
+    Loot: Name, ID, Boss_ID as foreign key,
+    '''
+    pass
 
 # O(1) search
 '''
