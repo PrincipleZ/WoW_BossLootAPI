@@ -3,6 +3,7 @@ import json
 import sys
 from boss import Boss
 from loot import Loot
+from secret import API_KEY
 from datetime import datetime
 from bs4 import BeautifulSoup
 
@@ -74,7 +75,7 @@ def set_cache(filename):
     @return: data in json dictionary
     '''
     data = json.loads(requests.get(
-        "https://us.api.battle.net/wow/zone/?locale=en_US&apikey=9sw5r4nkqxpbsvvysxdcpp8spxu7tejv").text)
+        "https://us.api.battle.net/wow/zone/?locale=en_US&apikey={}".format(API_KEY)).text)
     write_time_stamp(data, 2)
     with open(filename, 'w') as f:
         f.write(json.dumps(data))
