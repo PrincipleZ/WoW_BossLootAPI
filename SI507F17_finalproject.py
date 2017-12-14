@@ -10,7 +10,6 @@ import os
 import psycopg2
 import psycopg2.extras
 import codecs
-from flask import Flask, request, render_template
 
 # functions borrowed from project 5 to set timestamp to cache and check if
 # the cache is outdated
@@ -20,7 +19,26 @@ boss_cache_file = "boss_data.json"
 loot_cache_file = "loot_data.json"
 conn = ""
 cur = ""
-app = Flask(__name__)
+global_boss_list = []
+
+
+def db_connect_cursor():
+    '''
+    Function borrowed from project 6 to setup databse connection
+    '''
+    try:
+        db_connection = psycopg2.connect("dbname='wow_loot'")
+        print("Success connecting to database")
+    except:
+        print("Unable to connect to the database")
+        sys.exit(1)
+
+    db_cursor = db_connection.cursor(
+        cursor_factory=psycopg2.extras.RealDictCursor)
+
+    return db_connection, db_cursor
+
+conn, cur = db_connect_cursor()
 
 
 def write_time_stamp(input, expire_in_days):
@@ -270,9 +288,33 @@ def search_zones(search_term):
     add_to_database(boss_list, "boss")
     add_to_database(loot_list, "loot")
     print("Search complete and results have been appended to database")
+    write_for_flask(boss_list)
 
     # timeElapsed = datetime.now() - startTime
     # print('Time elpased (hh:mm:ss.ms) {}'.format(timeElapsed))
+
+
+def write_for_flask(global_boss_list):
+    master_list = []
+    for i in global_boss_list:
+        temp_dict = {
+            "name": i.name,
+            "description": i.description,
+            "loot": []
+        }
+        for j in i.lootList:
+            loot_dict = {
+                "name": j.name,
+                "ilevel": j.ilevel,
+                "stats": j.stats_to_string(),
+                "spell": j.spell
+            }
+            temp_dict['loot'].append(loot_dict)
+        master_list.append(temp_dict)
+    data = {"data": master_list, "zone": global_boss_list[0].zone}
+    with open("flask_data.json", 'w') as f:
+        json_data = json.dumps(data)
+        f.write(json_data)
 
 
 def search_loot(boss):
@@ -322,12 +364,12 @@ def search_loot(boss):
                                                      "html.parser"))
     # print(loot_id_list)
     # print(len(loot_id_list))
-    loot_list = []
+    res_loot_list = []
     for i in loot_id_list:
         loot = get_loot_info(i, str(boss_id[0]))
         if loot:
-            loot_list.append(loot)
-    return loot_list
+            res_loot_list.append(loot)
+    return res_loot_list
 
 
 def get_loot_info(loot_id, boss_id):
@@ -387,30 +429,12 @@ def scrap_loot(bs):
     return res
 
 
-def db_connect_cursor():
-    '''
-    Function borrowed from project 6 to setup databse connection
-    '''
-    try:
-        db_connection = psycopg2.connect("dbname='wow_loot'")
-        print("Success connecting to database")
-    except:
-        print("Unable to connect to the database")
-        sys.exit(1)
-
-    db_cursor = db_connection.cursor(
-        cursor_factory=psycopg2.extras.RealDictCursor)
-
-    return db_connection, db_cursor
-
-
 def setup_database():
     '''
     Set up 2 tables in SQL database: Boss and Loot
     Boss: Name, ID, Level, Level_Heroic, Level_Heroic_Repr, Zone, Description
     Loot: Name, ID, Boss_ID as foreign key,
     '''
-    conn, cur = db_connect_cursor()
 
     cur.execute(
         """CREATE TABLE IF NOT EXISTS "Boss"("Name" VARCHAR(40) UNIQUE, "ID" INT UNIQUE, "Level" INT, "Level_Heroic" INT, "Level_Heoic_Repr" VARCHAR(10), "Zone" INT, "Description" TEXT)""")
@@ -440,7 +464,7 @@ def add_to_database(object_list, object_type):
     @return:
         none
     '''
-    conn, cur = db_connect_cursor()
+
     if object_type == "boss":
         for i in object_list:
             cur.execute(
@@ -486,6 +510,7 @@ def search(search_term):
     timeElapsed = datetime.now() - startTime
     print('Time elpased (hh:mm:ss.ms) {}'.format(timeElapsed))
 '''
+
 
 if __name__ == '__main__':
     command = None

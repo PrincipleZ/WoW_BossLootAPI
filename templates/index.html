@@ -3,6 +3,21 @@
     <head>
         <meta charset="utf-8">
         <title>Search Results</title>
+        <style type="text/css">
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 5px;
+            }
+            th {
+                text-align: left;
+            }
+            td {
+                white-space:pre;
+            }
+        </style>
     </head>
     <body>
         <header>
@@ -14,20 +29,28 @@
             {% for item in items_to_embed %}
                 <h2> {{ item['name'] }} </h2>
                 <p> {{ item['description']}}</p>
+                {% if not item['loot'] %}
+                <p>Sorry, the loot list of this boss is not supported in wowdb.com.</p>
+                <p>Please go to wowhead.com to check the data.</p>
+                {% else %}
+                <table>
                 <tr>
                     <th>Name</th>
                     <th>iLevel</th>
                     <th>Stats</th>
                     <th>Spell</th>
                 </tr>
+                
                 {% for loot in item['loot'] %}
                 <tr>
-                    <th>{{loot['name']}}</th>
-                    <th>{{loot['ilevel']}}</th>
-                    <th>{{loot['stats']}}</th>
-                    <th>{{loot['spell']}}</th>
+                    <td>{{loot['name']}}</td>
+                    <td>{{loot['ilevel']}}</td>
+                    <td>{{loot['stats']}}</td>
+                    <td>{{loot['spell']}}</td>
                 </tr>
                 {% endfor %}
+                <table>
+                {% endif %}
             {% endfor %}
         </main>
     </body>

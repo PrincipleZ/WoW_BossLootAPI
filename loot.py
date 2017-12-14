@@ -57,12 +57,12 @@ class Loot(object):
         return newdict
 
     def stats_to_string(self):
-        res = ""
-        for k, v in self.stats:
+        res = []
+        for k, v in self.stats.items():
             if v != 0:
                 temp = k + ": " + str(v) + "\n"
-                res += temp
-        return res
+                res.append(temp)
+        return "".join(res)
 
     def parse_spell(self, spell):
         spell_list = []
