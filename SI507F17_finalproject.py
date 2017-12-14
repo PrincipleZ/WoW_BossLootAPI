@@ -100,7 +100,7 @@ def load_cache(filename):
         return set_cache(filename)
 
 
-def load_boss_cache(url):
+def load_boss_cache(url, filename=boss_cache_file):
     '''
     Load certain HTML of the boss from boss_data.json, or set the information in cache if not exists or has expired
     @params:
@@ -111,7 +111,7 @@ def load_boss_cache(url):
     # print(url)
     data = {}
     try:
-        with open(boss_cache_file, "r") as f:
+        with open(filename, "r") as f:
             cache_data = f.read()
             data = json.loads(cache_data)
             # check if data is expired
@@ -121,10 +121,10 @@ def load_boss_cache(url):
 
             return boss_data['html']
     except:
-        return set_boss_cache(url, data)
+        return set_boss_cache(url, data, filename)
 
 
-def set_boss_cache(url, data):
+def set_boss_cache(url, data, filename=boss_cache_file):
     '''
     Function to request data of certain boss from wowdb and save html text with time stamp
     @param:
@@ -138,13 +138,13 @@ def set_boss_cache(url, data):
         'html': new_data
     }
     write_time_stamp(data['url'], 365)
-    with open(boss_cache_file, 'w') as f:
+    with open(filename, 'w') as f:
         cache_json = json.dumps(data)
         f.write(cache_json)
     return new_data
 
 
-def load_loot_cache(loot_id):
+def load_loot_cache(loot_id, filename=loot_cache_file):
     '''
     Load certain HTML of the boss from loot_data.json, or set the information in cache if not exists or has expired
     @params:
@@ -154,7 +154,7 @@ def load_loot_cache(loot_id):
     '''
     data = {}
     try:
-        with open(loot_cache_file, "r") as f:
+        with open(filename, "r") as f:
             cache_data = f.read()
             data = json.loads(cache_data)
             # check if data is expired
@@ -164,10 +164,10 @@ def load_loot_cache(loot_id):
 
             return loot_data
     except:
-        return set_loot_cache(loot_id, data)
+        return set_loot_cache(loot_id, data, filename)
 
 
-def set_loot_cache(loot_id, data):
+def set_loot_cache(loot_id, data, filename=loot_cache_file):
     '''
     Function to get loot info via Blizzard API, set in cache and return a loot object
     @params:
@@ -183,7 +183,7 @@ def set_loot_cache(loot_id, data):
     data[loot_id] = new_data
     # print(data[loot_id])
     write_time_stamp(data[loot_id], 30)
-    with open(loot_cache_file, 'w') as f:
+    with open(filename, 'w') as f:
         cache_json = json.dumps(data)
         f.write(cache_json)
     return new_data
@@ -438,7 +438,7 @@ def setup_database():
 
     cur.execute(
         """CREATE TABLE IF NOT EXISTS "Boss"("Name" VARCHAR(40) UNIQUE, "ID" INT UNIQUE, "Level" INT, "Level_Heroic" INT, "Level_Heoic_Repr" VARCHAR(10), "Zone" INT, "Description" TEXT)""")
-    cur.execute("""CREATE TABLE IF NOT EXISTS "Loot"("Name" VARCHAR(128) UNIQUE, "ID" INT,
+    cur.execute("""CREATE TABLE IF NOT EXISTS "Loot"("Name" VARCHAR(128), "ID" INT UNIQUE,
                     "Item_Level" INT,
                     "Boss_ID" INT, FOREIGN KEY ("Boss_ID") REFERENCES "Boss"("ID"),
                     "Stamina" INT,
