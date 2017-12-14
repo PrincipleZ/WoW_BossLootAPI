@@ -8,6 +8,8 @@ Flow chart of working logic:
 ## Setup
 This project is expected to be run in Python 3.6, and should work in Python 3.
 
+You need to create an app in [Blizzard API](https://dev.battle.net), and paste the api key to secret.py file. 
+
 Required packages to run the program are included in the ```requirements.txt```.
 Use ```pip install -r requirements.txt``` to install the required packages.
 
