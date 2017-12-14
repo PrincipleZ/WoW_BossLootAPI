@@ -1,8 +1,8 @@
 /venv
 *.pyc
-secret.py
 /__pycache__
 *.json
+secret.py
 statReference.txt
 
 
