@@ -1,5 +1,5 @@
 /venv
-*.py
+*.pyc
 secret.py
 /__pycache__
 *.json
