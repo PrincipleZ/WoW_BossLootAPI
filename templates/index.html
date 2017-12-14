@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Search Results</title>
+    </head>
+    <body>
+        <header>
+            <p>Search Term:</p>
+            <h1>{{ search_term }}</h1>
+        </header>
+
+        <main>
+            {% for item in items_to_embed %}
+                <h2> {{ item['name'] }} </h2>
+                <p> {{ item['description']}}</p>
+                <tr>
+                    <th>Name</th>
+                    <th>iLevel</th>
+                    <th>Stats</th>
+                    <th>Spell</th>
+                </tr>
+                {% for loot in item['loot'] %}
+                <tr>
+                    <th>{{loot['name']}}</th>
+                    <th>{{loot['ilevel']}}</th>
+                    <th>{{loot['stats']}}</th>
+                    <th>{{loot['spell']}}</th>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </main>
+    </body>
+</html>

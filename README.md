@@ -5,3 +5,6 @@ Flow chart of working logic:
 
 ![Flow chart](flowchart.png "Flow Chart")
 
+## Setup
+Creat a local database called wow_loot
+
